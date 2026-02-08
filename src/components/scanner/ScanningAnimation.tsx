@@ -27,17 +27,15 @@ export function ScanningAnimation() {
       <div className="absolute inset-0 cyber-grid opacity-20" />
       
       {/* Radar animation */}
-      <div className="relative mb-12">
+      <div className="relative mb-12 flex items-center justify-center">
         {/* Outer rings */}
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="absolute inset-0 rounded-full border border-primary/20 pulse-ring"
+            className="absolute rounded-full border border-primary/20 pulse-ring"
             style={{
               width: `${120 + i * 60}px`,
               height: `${120 + i * 60}px`,
-              left: `${-30 - i * 30}px`,
-              top: `${-30 - i * 30}px`,
               animationDelay: `${i * 0.3}s`,
             }}
           />

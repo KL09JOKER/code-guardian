@@ -1,53 +1,128 @@
-import { useState, useCallback } from 'react';
-import { AppState, ScanResult, ScanHistoryItem } from '@/types/scanner';
-import { mockVulnerabilities, mockScanHistory } from '@/data/mockVulnerabilities';
+import { useState, useCallback, useEffect } from 'react';
+import { AppState, ScanResult, ScanHistoryItem, Vulnerability } from '@/types/scanner';
 import { Header } from '@/components/scanner/Header';
 import { UploadScreen } from '@/components/scanner/UploadScreen';
 import { ScanningAnimation } from '@/components/scanner/ScanningAnimation';
 import { ResultsScreen } from '@/components/scanner/ResultsScreen';
 import { ScanHistory } from '@/components/scanner/ScanHistory';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const Index = () => {
   const [appState, setAppState] = useState<AppState>('upload');
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('javascript');
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
-  const [history, setHistory] = useState<ScanHistoryItem[]>(mockScanHistory);
+  const [history, setHistory] = useState<ScanHistoryItem[]>([]);
   const [showHistory, setShowHistory] = useState(false);
 
-  const handleStartScan = useCallback(() => {
+  // Load history from database on mount
+  useEffect(() => {
+    const loadHistory = async () => {
+      const { data, error } = await supabase
+        .from('scan_history')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Failed to load history:', error);
+        return;
+      }
+
+      if (data) {
+        setHistory(
+          data.map((row) => ({
+            id: row.id,
+            language: row.language,
+            riskScore: row.risk_score,
+            vulnerabilityCount: row.vulnerability_count,
+            timestamp: new Date(row.created_at),
+            codePreview: row.code_preview,
+          }))
+        );
+      }
+    };
+    loadHistory();
+  }, []);
+
+  const handleStartScan = useCallback(async () => {
     if (!code.trim()) return;
-    
+
     setAppState('scanning');
-    
-    // Simulate scanning process
-    setTimeout(() => {
+    const startTime = Date.now();
+
+    try {
+      const { data, error } = await supabase.functions.invoke('scan-code', {
+        body: { code, language },
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Scan failed');
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      const scanDuration = Date.now() - startTime;
+      const vulnerabilities: Vulnerability[] = (data.vulnerabilities || []).map(
+        (v: any, i: number) => ({
+          id: v.id || `vuln-${i}`,
+          type: v.type,
+          severity: v.severity,
+          line: v.line,
+          endLine: v.endLine,
+          description: v.description,
+          recommendation: v.recommendation,
+        })
+      );
+
       const result: ScanResult = {
         id: `scan-${Date.now()}`,
         code,
         language,
-        riskScore: Math.floor(Math.random() * 40) + 50, // 50-90 for demo
-        vulnerabilities: mockVulnerabilities,
+        riskScore: data.riskScore ?? 0,
+        vulnerabilities,
         timestamp: new Date(),
-        scanDuration: Math.floor(Math.random() * 2000) + 1500,
+        scanDuration,
       };
-      
+
       setScanResult(result);
-      
-      // Add to history
-      const historyItem: ScanHistoryItem = {
-        id: result.id,
-        language: result.language,
-        riskScore: result.riskScore,
-        vulnerabilityCount: result.vulnerabilities.length,
-        timestamp: result.timestamp,
-        codePreview: code.split('\n')[0].slice(0, 50),
-      };
-      setHistory((prev) => [historyItem, ...prev]);
-      
+
+      // Save to database
+      const { data: inserted, error: insertError } = await supabase
+        .from('scan_history')
+        .insert({
+          language: result.language,
+          risk_score: result.riskScore,
+          vulnerability_count: result.vulnerabilities.length,
+          code: code,
+          code_preview: code.split('\n')[0].slice(0, 50),
+          vulnerabilities: JSON.parse(JSON.stringify(result.vulnerabilities)),
+          scan_duration: result.scanDuration,
+        })
+        .select()
+        .single();
+
+      if (!insertError && inserted) {
+        const historyItem: ScanHistoryItem = {
+          id: inserted.id,
+          language: inserted.language,
+          riskScore: inserted.risk_score,
+          vulnerabilityCount: inserted.vulnerability_count,
+          timestamp: new Date(inserted.created_at),
+          codePreview: inserted.code_preview,
+        };
+        setHistory((prev) => [historyItem, ...prev]);
+      }
+
       setAppState('results');
-    }, 4000);
+    } catch (err: any) {
+      console.error('Scan error:', err);
+      toast.error(err.message || 'Failed to scan code. Please try again.');
+      setAppState('upload');
+    }
   }, [code, language]);
 
   const handleNewScan = useCallback(() => {
@@ -56,24 +131,48 @@ const Index = () => {
     setAppState('upload');
   }, []);
 
-  const handleHistorySelect = useCallback((item: ScanHistoryItem) => {
-    // In a real app, this would load the full scan result
-    // For demo, we'll just show mock results
+  const handleHistorySelect = useCallback(async (item: ScanHistoryItem) => {
+    // Load full scan from database
+    const { data, error } = await supabase
+      .from('scan_history')
+      .select('*')
+      .eq('id', item.id)
+      .maybeSingle();
+
+    if (error || !data) {
+      toast.error('Failed to load scan details');
+      return;
+    }
+
+    const vulnerabilities = (data.vulnerabilities as any[]) || [];
     const result: ScanResult = {
-      id: item.id,
-      code: item.codePreview + '\n// ... rest of code',
-      language: item.language,
-      riskScore: item.riskScore,
-      vulnerabilities: mockVulnerabilities.slice(0, item.vulnerabilityCount),
-      timestamp: item.timestamp,
-      scanDuration: 1500,
+      id: data.id,
+      code: data.code,
+      language: data.language,
+      riskScore: data.risk_score,
+      vulnerabilities: vulnerabilities.map((v: any, i: number) => ({
+        id: v.id || `vuln-${i}`,
+        type: v.type,
+        severity: v.severity,
+        line: v.line,
+        endLine: v.endLine,
+        description: v.description,
+        recommendation: v.recommendation,
+      })),
+      timestamp: new Date(data.created_at),
+      scanDuration: data.scan_duration,
     };
     setScanResult(result);
     setAppState('results');
     setShowHistory(false);
   }, []);
 
-  const handleHistoryDelete = useCallback((id: string) => {
+  const handleHistoryDelete = useCallback(async (id: string) => {
+    const { error } = await supabase.from('scan_history').delete().eq('id', id);
+    if (error) {
+      toast.error('Failed to delete scan');
+      return;
+    }
     setHistory((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
@@ -83,13 +182,11 @@ const Index = () => {
       <div className="fixed inset-0 cyber-grid opacity-10 pointer-events-none" />
       <div className="fixed inset-0 matrix-bg pointer-events-none" />
       
-      {/* Header */}
       <Header 
         onHistoryClick={() => setShowHistory(true)} 
         showHistory={showHistory}
       />
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 py-8 relative z-10">
         {appState === 'upload' && (
           <UploadScreen
@@ -108,7 +205,6 @@ const Index = () => {
         )}
       </main>
 
-      {/* History Sidebar */}
       <Sheet open={showHistory} onOpenChange={setShowHistory}>
         <SheetContent className="bg-sidebar border-l border-sidebar-border w-[350px] sm:w-[400px]">
           <SheetHeader>

@@ -1,8 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { CodeEditor } from './CodeEditor';
 import { LanguageSelector } from './LanguageSelector';
-import { Scan, Sparkles } from 'lucide-react';
-import { sampleVulnerableCode } from '@/data/mockVulnerabilities';
+import { Scan } from 'lucide-react';
 
 interface UploadScreenProps {
   code: string;
@@ -19,11 +18,6 @@ export function UploadScreen({
   onLanguageChange,
   onStartScan,
 }: UploadScreenProps) {
-  const handleLoadSample = () => {
-    onCodeChange(sampleVulnerableCode);
-    onLanguageChange('javascript');
-  };
-
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Hero Section */}
@@ -41,16 +35,6 @@ export function UploadScreen({
       {/* Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <LanguageSelector value={language} onChange={onLanguageChange} />
-        
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleLoadSample}
-          className="text-muted-foreground hover:text-primary"
-        >
-          <Sparkles className="w-4 h-4 mr-2" />
-          Load Sample Code
-        </Button>
       </div>
 
       {/* Code Editor */}

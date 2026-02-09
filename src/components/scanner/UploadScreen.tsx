@@ -1,6 +1,8 @@
+import { useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { CodeEditor } from './CodeEditor';
 import { LanguageSelector } from './LanguageSelector';
+import { FileUploadZone } from './FileUploadZone';
 import { Scan } from 'lucide-react';
 
 interface UploadScreenProps {
@@ -18,6 +20,11 @@ export function UploadScreen({
   onLanguageChange,
   onStartScan,
 }: UploadScreenProps) {
+  const handleFileLoaded = useCallback((content: string, detectedLang: string) => {
+    onCodeChange(content);
+    onLanguageChange(detectedLang);
+  }, [onCodeChange, onLanguageChange]);
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Hero Section */}
@@ -31,6 +38,9 @@ export function UploadScreen({
           potential backdoors, and vulnerabilities in real-time.
         </p>
       </div>
+
+      {/* File Upload */}
+      <FileUploadZone onFileLoaded={handleFileLoaded} />
 
       {/* Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

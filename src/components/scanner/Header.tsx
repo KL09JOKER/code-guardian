@@ -1,12 +1,25 @@
-import { Shield, History, Github } from 'lucide-react';
+import { Shield, History, Github, LayoutDashboard, Palette, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useTheme, THEMES } from '@/contexts/ThemeContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface HeaderProps {
   onHistoryClick: () => void;
   showHistory: boolean;
+  isDashboard?: boolean;
 }
 
-export function Header({ onHistoryClick, showHistory }: HeaderProps) {
+export function Header({ onHistoryClick, showHistory, isDashboard }: HeaderProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { theme, setTheme } = useTheme();
+
   return (
     <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -24,15 +37,61 @@ export function Header({ onHistoryClick, showHistory }: HeaderProps) {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Nav links */}
           <Button
-            variant={showHistory ? "cyber" : "ghost"}
+            variant={location.pathname === '/' ? 'cyber' : 'ghost'}
             size="sm"
-            onClick={onHistoryClick}
+            onClick={() => navigate('/')}
             className="gap-2"
           >
-            <History className="w-4 h-4" />
-            <span className="hidden sm:inline">History</span>
+            <Home className="w-4 h-4" />
+            <span className="hidden sm:inline">Scanner</span>
           </Button>
+          <Button
+            variant={location.pathname === '/dashboard' ? 'cyber' : 'ghost'}
+            size="sm"
+            onClick={() => navigate('/dashboard')}
+            className="gap-2"
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            <span className="hidden sm:inline">Dashboard</span>
+          </Button>
+
+          {!isDashboard && (
+            <Button
+              variant={showHistory ? 'cyber' : 'ghost'}
+              size="sm"
+              onClick={onHistoryClick}
+              className="gap-2"
+            >
+              <History className="w-4 h-4" />
+              <span className="hidden sm:inline">History</span>
+            </Button>
+          )}
+
+          {/* Theme Switcher */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Palette className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {THEMES.map((t) => (
+                <DropdownMenuItem
+                  key={t.value}
+                  onClick={() => setTheme(t.value)}
+                  className={theme === t.value ? 'bg-accent/20' : ''}
+                >
+                  <div>
+                    <div className="font-medium text-sm">{t.label}</div>
+                    <div className="text-xs text-muted-foreground">{t.description}</div>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button variant="ghost" size="icon" asChild>
             <a href="https://github.com" target="_blank" rel="noopener noreferrer">
               <Github className="w-4 h-4" />

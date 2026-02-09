@@ -19,22 +19,9 @@ export function ResultsScreen({ result, onNewScan }: ResultsScreenProps) {
   );
 
   const handleDownloadReport = () => {
-    // Mock download - in real app, this would generate a PDF
-    const report = {
-      scanId: result.id,
-      timestamp: result.timestamp,
-      riskScore: result.riskScore,
-      language: result.language,
-      vulnerabilities: result.vulnerabilities,
-    };
-    
-    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `security-report-${result.id}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    import('@/lib/generateReport').then(({ generatePdfReport }) => {
+      generatePdfReport(result);
+    });
   };
 
   return (

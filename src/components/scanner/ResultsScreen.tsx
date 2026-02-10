@@ -5,6 +5,8 @@ import { RiskScoreBadge } from './RiskScoreBadge';
 import { VulnerabilityCard } from './VulnerabilityCard';
 import { CodeViewer } from './CodeViewer';
 import { AIExplanation } from './AIExplanation';
+import { AIFixSuggestion } from './AIFixSuggestion';
+import { EmailReportDialog } from './EmailReportDialog';
 import { Download, RotateCcw, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -47,11 +49,12 @@ export function ResultsScreen({ result, onNewScan }: ResultsScreenProps) {
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           <Button variant="cyberOutline" onClick={handleDownloadReport}>
             <Download className="w-4 h-4 mr-2" />
             Download Report
           </Button>
+          <EmailReportDialog result={result} />
           <Button variant="ghost" onClick={onNewScan}>
             <RotateCcw className="w-4 h-4 mr-2" />
             New Scan
@@ -79,7 +82,7 @@ export function ResultsScreen({ result, onNewScan }: ResultsScreenProps) {
           </div>
         </div>
 
-        {/* Right Column: Code Viewer + AI Explanation */}
+        {/* Right Column: Code Viewer + AI Explanation + Fix */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-foreground">Code Analysis</h3>
           
@@ -90,6 +93,12 @@ export function ResultsScreen({ result, onNewScan }: ResultsScreenProps) {
           />
           
           <AIExplanation vulnerability={selectedVulnerability} />
+          
+          <AIFixSuggestion
+            vulnerability={selectedVulnerability}
+            code={result.code}
+            language={result.language}
+          />
         </div>
       </div>
     </div>

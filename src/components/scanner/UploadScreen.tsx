@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { CodeEditor } from './CodeEditor';
 import { LanguageSelector } from './LanguageSelector';
 import { FileUploadZone } from './FileUploadZone';
+import { MultiFileUploadZone } from './MultiFileUploadZone';
 import { Scan } from 'lucide-react';
 
 interface UploadScreenProps {
@@ -25,6 +26,11 @@ export function UploadScreen({
     onLanguageChange(detectedLang);
   }, [onCodeChange, onLanguageChange]);
 
+  const handleMultiFileLoaded = useCallback((combinedCode: string, detectedLang: string) => {
+    onCodeChange(combinedCode);
+    onLanguageChange(detectedLang);
+  }, [onCodeChange, onLanguageChange]);
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Hero Section */}
@@ -39,8 +45,11 @@ export function UploadScreen({
         </p>
       </div>
 
-      {/* File Upload */}
-      <FileUploadZone onFileLoaded={handleFileLoaded} />
+      {/* File Upload Options */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FileUploadZone onFileLoaded={handleFileLoaded} />
+        <MultiFileUploadZone onFilesLoaded={handleMultiFileLoaded} />
+      </div>
 
       {/* Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

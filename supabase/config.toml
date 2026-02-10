@@ -2,3 +2,9 @@ project_id = "dabdrpcsuuerkdcsepci"
 
 [functions.scan-code]
 verify_jwt = false
+
+[functions.ai-fix]
+verify_jwt = false
+
+[functions.send-report-email]
+verify_jwt = false

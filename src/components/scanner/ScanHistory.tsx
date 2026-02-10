@@ -1,8 +1,10 @@
+import { useState, useMemo } from 'react';
 import { ScanHistoryItem } from '@/types/scanner';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Clock, Trash2, Eye, Shield, ShieldAlert, ShieldX, ShieldCheck } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { HistoryFilters } from './HistoryFilters';
 
 interface ScanHistoryProps {
   history: ScanHistoryItem[];
@@ -25,6 +27,21 @@ function getRiskColor(score: number) {
 }
 
 export function ScanHistory({ history, onSelect, onDelete }: ScanHistoryProps) {
+  const [search, setSearch] = useState('');
+  const [languageFilter, setLanguageFilter] = useState('all');
+  const [severityFilter, setSeverityFilter] = useState('all');
+
+  const filtered = useMemo(() => {
+    return history.filter(item => {
+      if (search && !item.codePreview.toLowerCase().includes(search.toLowerCase()) && !item.language.toLowerCase().includes(search.toLowerCase())) return false;
+      if (languageFilter !== 'all' && item.language !== languageFilter) return false;
+      if (severityFilter === 'high' && item.riskScore < 75) return false;
+      if (severityFilter === 'medium' && (item.riskScore < 50 || item.riskScore >= 75)) return false;
+      if (severityFilter === 'low' && item.riskScore >= 50) return false;
+      return true;
+    });
+  }, [history, search, languageFilter, severityFilter]);
+
   if (history.length === 0) {
     return (
       <div className="text-center py-12">
@@ -37,11 +54,20 @@ export function ScanHistory({ history, onSelect, onDelete }: ScanHistoryProps) {
 
   return (
     <div className="space-y-3">
+      <HistoryFilters
+        search={search}
+        onSearchChange={setSearch}
+        languageFilter={languageFilter}
+        onLanguageFilterChange={setLanguageFilter}
+        severityFilter={severityFilter}
+        onSeverityFilterChange={setSeverityFilter}
+      />
+
       <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider px-1">
-        Recent Scans
+        {filtered.length} of {history.length} Scans
       </h3>
       
-      {history.map((item) => {
+      {filtered.map((item) => {
         const RiskIcon = getRiskIcon(item.riskScore);
         const riskColor = getRiskColor(item.riskScore);
 

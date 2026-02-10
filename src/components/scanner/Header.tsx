@@ -1,4 +1,4 @@
-import { Shield, History, Github, LayoutDashboard, Palette, Home } from 'lucide-react';
+import { Shield, History, Github, LayoutDashboard, Palette, Home, GitCompare, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme, THEMES } from '@/contexts/ThemeContext';
@@ -20,10 +20,17 @@ export function Header({ onHistoryClick, showHistory, isDashboard }: HeaderProps
   const location = useLocation();
   const { theme, setTheme } = useTheme();
 
+  const navItems = [
+    { path: '/scanner', label: 'Scanner', icon: Home },
+    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/compare', label: 'Compare', icon: GitCompare },
+    { path: '/knowledge-base', label: 'Learn', icon: BookOpen },
+  ];
+
   return (
     <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
           <div className="relative">
             <Shield className="w-8 h-8 text-primary" />
             <div className="absolute inset-0 blur-lg bg-primary/30 -z-10" />
@@ -36,40 +43,35 @@ export function Header({ onHistoryClick, showHistory, isDashboard }: HeaderProps
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Nav links */}
-          <Button
-            variant={location.pathname === '/' ? 'cyber' : 'ghost'}
-            size="sm"
-            onClick={() => navigate('/')}
-            className="gap-2"
-          >
-            <Home className="w-4 h-4" />
-            <span className="hidden sm:inline">Scanner</span>
-          </Button>
-          <Button
-            variant={location.pathname === '/dashboard' ? 'cyber' : 'ghost'}
-            size="sm"
-            onClick={() => navigate('/dashboard')}
-            className="gap-2"
-          >
-            <LayoutDashboard className="w-4 h-4" />
-            <span className="hidden sm:inline">Dashboard</span>
-          </Button>
+        <div className="flex items-center gap-1">
+          {navItems.map(item => {
+            const Icon = item.icon;
+            return (
+              <Button
+                key={item.path}
+                variant={location.pathname === item.path ? 'cyber' : 'ghost'}
+                size="sm"
+                onClick={() => navigate(item.path)}
+                className="gap-1.5"
+              >
+                <Icon className="w-4 h-4" />
+                <span className="hidden md:inline">{item.label}</span>
+              </Button>
+            );
+          })}
 
-          {!isDashboard && (
+          {!isDashboard && location.pathname === '/scanner' && (
             <Button
               variant={showHistory ? 'cyber' : 'ghost'}
               size="sm"
               onClick={onHistoryClick}
-              className="gap-2"
+              className="gap-1.5"
             >
               <History className="w-4 h-4" />
               <span className="hidden sm:inline">History</span>
             </Button>
           )}
 
-          {/* Theme Switcher */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">

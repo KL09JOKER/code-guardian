@@ -5,8 +5,9 @@ import { RiskChart } from '@/components/dashboard/RiskChart';
 import { SeverityPieChart } from '@/components/dashboard/SeverityPieChart';
 import { VulnTypeChart } from '@/components/dashboard/VulnTypeChart';
 import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Download, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
-import { Loader2 } from 'lucide-react';
 
 interface ScanRow {
   id: string;
@@ -34,6 +35,56 @@ const Dashboard = () => {
     load();
   }, []);
 
+  const handleExportDashboardPdf = () => {
+    import('jspdf').then(({ default: jsPDF }) => {
+      const doc = new jsPDF();
+      const pw = doc.internal.pageSize.getWidth();
+      
+      doc.setFontSize(22);
+      doc.setTextColor(59, 130, 246);
+      doc.text('BackDoorScanner', 14, 20);
+      doc.setFontSize(12);
+      doc.setTextColor(150, 150, 150);
+      doc.text('Analytics Dashboard Summary', 14, 28);
+      doc.setDrawColor(59, 130, 246);
+      doc.line(14, 32, pw - 14, 32);
+
+      doc.setFontSize(10);
+      doc.setTextColor(80, 80, 80);
+      doc.text(`Generated: ${format(new Date(), 'PPpp')}`, 14, 40);
+      doc.text(`Total Scans: ${totalScans}`, 14, 48);
+      doc.text(`Average Risk Score: ${Math.round(avgRiskScore)}`, 14, 56);
+      doc.text(`Total Vulnerabilities: ${totalVulns}`, 14, 64);
+
+      let y = 78;
+      doc.setFontSize(14);
+      doc.setTextColor(40, 40, 40);
+      doc.text('Severity Distribution', 14, y);
+      y += 8;
+      doc.setFontSize(10);
+      severityData.forEach(s => {
+        doc.text(`${s.name}: ${s.value}`, 14, y);
+        y += 6;
+      });
+
+      y += 4;
+      doc.setFontSize(14);
+      doc.text('Top Vulnerability Types', 14, y);
+      y += 8;
+      doc.setFontSize(10);
+      vulnTypeData.forEach(v => {
+        doc.text(`${v.type}: ${v.count}`, 14, y);
+        y += 6;
+      });
+
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text('BackDoorScanner Dashboard Report', pw / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+
+      doc.save('dashboard-report.pdf');
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -47,13 +98,11 @@ const Dashboard = () => {
   const totalVulns = scans.reduce((s, r) => s + r.vulnerability_count, 0);
   const latestDate = scans[0] ? format(new Date(scans[0].created_at), 'MMM d, yyyy') : null;
 
-  // Risk trend (last 10 reversed)
   const riskData = scans.slice(0, 10).reverse().map((s, i) => ({
     name: `Scan ${i + 1}`,
     riskScore: s.risk_score,
   }));
 
-  // Severity distribution
   const severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
   scans.forEach(s => {
     const vulns = (s.vulnerabilities as any[]) || [];
@@ -63,7 +112,6 @@ const Dashboard = () => {
   });
   const severityData = Object.entries(severityCounts).map(([name, value]) => ({ name, value }));
 
-  // Vuln types
   const typeMap: Record<string, number> = {};
   scans.forEach(s => {
     const vulns = (s.vulnerabilities as any[]) || [];
@@ -84,9 +132,14 @@ const Dashboard = () => {
       <Header onHistoryClick={() => {}} showHistory={false} isDashboard />
 
       <main className="container mx-auto px-4 py-8 relative z-10 space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground mb-1">Dashboard</h2>
-          <p className="text-sm text-muted-foreground">Overview of your scan analytics</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground mb-1">Dashboard</h2>
+            <p className="text-sm text-muted-foreground">Overview of your scan analytics</p>
+          </div>
+          <Button variant="cyberOutline" size="sm" onClick={handleExportDashboardPdf}>
+            <Download className="w-4 h-4 mr-2" /> Export PDF
+          </Button>
         </div>
 
         <StatsCards

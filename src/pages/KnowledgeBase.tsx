@@ -1,4 +1,4 @@
-import { Header } from '@/components/scanner/Header';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { Card } from '@/components/ui/card';
 import { Shield, AlertTriangle, Code2, Lock, Key, Bug, Zap, Database, Globe, Server } from 'lucide-react';
 
@@ -78,12 +78,8 @@ const severityColors: Record<string, string> = {
 
 const KnowledgeBase = () => {
   return (
-    <div className="min-h-screen bg-background relative">
-      <div className="fixed inset-0 cyber-grid opacity-10 pointer-events-none" />
-      <div className="fixed inset-0 matrix-bg pointer-events-none" />
-      <Header onHistoryClick={() => {}} showHistory={false} isDashboard />
-
-      <main className="container mx-auto px-4 py-8 relative z-10 space-y-8">
+    <AppLayout>
+      <div className="space-y-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-foreground mb-3 flex items-center justify-center gap-3">
             <Shield className="w-8 h-8 text-primary" />
@@ -137,8 +133,8 @@ const KnowledgeBase = () => {
             );
           })}
         </div>
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   );
 };
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Header } from '@/components/scanner/Header';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { StatsCards } from '@/components/dashboard/StatsCards';
 import { RiskChart } from '@/components/dashboard/RiskChart';
 import { SeverityPieChart } from '@/components/dashboard/SeverityPieChart';
@@ -34,6 +34,37 @@ const Dashboard = () => {
     };
     load();
   }, []);
+
+  const totalScans = scans.length;
+  const avgRiskScore = totalScans > 0 ? scans.reduce((s, r) => s + r.risk_score, 0) / totalScans : 0;
+  const totalVulns = scans.reduce((s, r) => s + r.vulnerability_count, 0);
+  const latestDate = scans[0] ? format(new Date(scans[0].created_at), 'MMM d, yyyy') : null;
+
+  const riskData = scans.slice(0, 10).reverse().map((s, i) => ({
+    name: `Scan ${i + 1}`,
+    riskScore: s.risk_score,
+  }));
+
+  const severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
+  scans.forEach(s => {
+    const vulns = (s.vulnerabilities as any[]) || [];
+    vulns.forEach((v: any) => {
+      if (v.severity in severityCounts) severityCounts[v.severity as keyof typeof severityCounts]++;
+    });
+  });
+  const severityData = Object.entries(severityCounts).map(([name, value]) => ({ name, value }));
+
+  const typeMap: Record<string, number> = {};
+  scans.forEach(s => {
+    const vulns = (s.vulnerabilities as any[]) || [];
+    vulns.forEach((v: any) => {
+      typeMap[v.type] = (typeMap[v.type] || 0) + 1;
+    });
+  });
+  const vulnTypeData = Object.entries(typeMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([type, count]) => ({ type, count }));
 
   const handleExportDashboardPdf = () => {
     import('jspdf').then(({ default: jsPDF }) => {
@@ -87,51 +118,17 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
+      <AppLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </AppLayout>
     );
   }
 
-  const totalScans = scans.length;
-  const avgRiskScore = totalScans > 0 ? scans.reduce((s, r) => s + r.risk_score, 0) / totalScans : 0;
-  const totalVulns = scans.reduce((s, r) => s + r.vulnerability_count, 0);
-  const latestDate = scans[0] ? format(new Date(scans[0].created_at), 'MMM d, yyyy') : null;
-
-  const riskData = scans.slice(0, 10).reverse().map((s, i) => ({
-    name: `Scan ${i + 1}`,
-    riskScore: s.risk_score,
-  }));
-
-  const severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
-  scans.forEach(s => {
-    const vulns = (s.vulnerabilities as any[]) || [];
-    vulns.forEach((v: any) => {
-      if (v.severity in severityCounts) severityCounts[v.severity as keyof typeof severityCounts]++;
-    });
-  });
-  const severityData = Object.entries(severityCounts).map(([name, value]) => ({ name, value }));
-
-  const typeMap: Record<string, number> = {};
-  scans.forEach(s => {
-    const vulns = (s.vulnerabilities as any[]) || [];
-    vulns.forEach((v: any) => {
-      typeMap[v.type] = (typeMap[v.type] || 0) + 1;
-    });
-  });
-  const vulnTypeData = Object.entries(typeMap)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 8)
-    .map(([type, count]) => ({ type, count }));
-
   return (
-    <div className="min-h-screen bg-background relative">
-      <div className="fixed inset-0 cyber-grid opacity-10 pointer-events-none" />
-      <div className="fixed inset-0 matrix-bg pointer-events-none" />
-
-      <Header onHistoryClick={() => {}} showHistory={false} isDashboard />
-
-      <main className="container mx-auto px-4 py-8 relative z-10 space-y-6">
+    <AppLayout>
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-foreground mb-1">Dashboard</h2>
@@ -155,8 +152,8 @@ const Dashboard = () => {
         </div>
 
         <VulnTypeChart data={vulnTypeData} />
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   );
 };
 

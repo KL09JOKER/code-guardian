@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Header } from '@/components/scanner/Header';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RiskScoreBadge } from '@/components/scanner/RiskScoreBadge';
 import { GitCompare, ArrowRight } from 'lucide-react';
@@ -88,12 +87,8 @@ const Compare = () => {
   const scoreDiff = left && right ? right.risk_score - left.risk_score : null;
 
   return (
-    <div className="min-h-screen bg-background relative">
-      <div className="fixed inset-0 cyber-grid opacity-10 pointer-events-none" />
-      <div className="fixed inset-0 matrix-bg pointer-events-none" />
-      <Header onHistoryClick={() => {}} showHistory={false} isDashboard />
-
-      <main className="container mx-auto px-4 py-8 relative z-10 space-y-6">
+    <AppLayout>
+      <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-bold text-foreground mb-1 flex items-center gap-2">
             <GitCompare className="w-6 h-6 text-primary" /> Scan Comparison
@@ -142,8 +137,8 @@ const Compare = () => {
           {renderScanCard(left, 'first')}
           {renderScanCard(right, 'second')}
         </div>
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   );
 };
 

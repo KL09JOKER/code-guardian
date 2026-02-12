@@ -11,9 +11,11 @@ interface AIFixSuggestionProps {
   vulnerability: Vulnerability | null;
   code: string;
   language: string;
+  buttonOnly?: boolean;
+  showDiffOnly?: boolean;
 }
 
-export function AIFixSuggestion({ vulnerability, code, language }: AIFixSuggestionProps) {
+export function AIFixSuggestion({ vulnerability, code, language, buttonOnly, showDiffOnly }: AIFixSuggestionProps) {
   const [fixedCode, setFixedCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -50,6 +52,38 @@ export function AIFixSuggestion({ vulnerability, code, language }: AIFixSuggesti
 
   if (!vulnerability) return null;
 
+  // Render just the button for the top action bar
+  if (buttonOnly) {
+    return (
+      <Button variant="cyber" onClick={handleFix} disabled={loading}>
+        {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Wand2 className="w-4 h-4 mr-2" />}
+        {loading ? 'Fixing...' : 'Fix with AI'}
+      </Button>
+    );
+  }
+
+  // Render only the diff result (no button)
+  if (showDiffOnly && fixedCode) {
+    return (
+      <Card className="p-4 bg-card/50 border-border/50 space-y-3">
+        <div className="flex items-center justify-between">
+          <h4 className="font-semibold text-foreground flex items-center gap-2">
+            <Wand2 className="w-4 h-4 text-primary" />
+            AI Fix Suggestion
+          </h4>
+          <Button variant="ghost" size="sm" onClick={handleCopy}>
+            {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+            {copied ? 'Copied' : 'Copy Fix'}
+          </Button>
+        </div>
+        <CodeDiffView originalCode={code} fixedCode={fixedCode} vulnerability={vulnerability} />
+      </Card>
+    );
+  }
+
+  if (showDiffOnly) return null;
+
+  // Default full render
   return (
     <Card className="p-4 bg-card/50 border-border/50 space-y-3">
       <div className="flex items-center justify-between">

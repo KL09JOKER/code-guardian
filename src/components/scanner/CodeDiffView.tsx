@@ -23,7 +23,7 @@ export function CodeDiffView({ originalCode, fixedCode, vulnerability }: CodeDif
         <div className="text-xs font-medium text-critical mb-1 flex items-center gap-1">
           <span className="w-2 h-2 rounded-full bg-critical" /> Original (Vulnerable)
         </div>
-        <pre className="bg-critical/5 border border-critical/20 rounded-lg p-3 overflow-x-auto text-xs font-mono leading-relaxed">
+        <pre className="bg-critical/5 border border-critical/20 rounded-lg p-3 overflow-x-auto overflow-y-auto max-h-[500px] text-xs font-mono leading-relaxed">
           {origSlice.map((line, i) => {
             const lineNum = startLine + i + 1;
             const isVulnLine = lineNum >= vulnerability.line && lineNum <= (vulnerability.endLine || vulnerability.line);
@@ -40,7 +40,7 @@ export function CodeDiffView({ originalCode, fixedCode, vulnerability }: CodeDif
         <div className="text-xs font-medium text-success mb-1 flex items-center gap-1">
           <span className="w-2 h-2 rounded-full bg-success" /> Fixed (Secure)
         </div>
-        <pre className="bg-success/5 border border-success/20 rounded-lg p-3 overflow-x-auto text-xs font-mono leading-relaxed">
+        <pre className="bg-success/5 border border-success/20 rounded-lg p-3 overflow-x-auto overflow-y-auto max-h-[500px] text-xs font-mono leading-relaxed">
           {fixedSlice.map((line, i) => {
             const lineNum = startLine + i + 1;
             const isFixLine = lineNum >= vulnerability.line && lineNum <= (vulnerability.endLine || vulnerability.line) + (fixedSlice.length - origSlice.length);

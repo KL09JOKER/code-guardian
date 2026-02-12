@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-export type ThemeName = 'dark-tech' | 'cyber-green' | 'midnight-purple';
+export type ThemeName = 'dark-tech' | 'cyber-green' | 'midnight-purple' | 'crimson-red';
 
 interface ThemeContextType {
   theme: ThemeName;
@@ -24,7 +24,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove('theme-dark-tech', 'theme-cyber-green', 'theme-midnight-purple');
+    root.classList.remove('theme-dark-tech', 'theme-cyber-green', 'theme-midnight-purple', 'theme-crimson-red');
     root.classList.add(`theme-${theme}`);
   }, [theme]);
 
@@ -45,4 +45,5 @@ export const THEMES: { value: ThemeName; label: string; description: string }[] 
   { value: 'dark-tech', label: 'Dark Tech', description: 'Electric blue & pink neon' },
   { value: 'cyber-green', label: 'Cyber Green', description: 'Classic hacker aesthetic' },
   { value: 'midnight-purple', label: 'Midnight Purple', description: 'Deep violet tones' },
+  { value: 'crimson-red', label: 'Crimson Red', description: 'Blood red & ember glow' },
 ];

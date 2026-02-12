@@ -12,7 +12,7 @@ export function VulnTypeChart({ data }: VulnTypeChartProps) {
         <CardTitle className="text-base text-foreground">Most Common Vulnerability Types</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[250px]">
+        <div className="h-[350px]">
           {data.length === 0 ? (
             <div className="flex items-center justify-center h-full text-sm text-muted-foreground">No data</div>
           ) : (
@@ -20,7 +20,7 @@ export function VulnTypeChart({ data }: VulnTypeChartProps) {
               <BarChart data={data} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis type="number" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} />
-                <YAxis dataKey="type" type="category" width={120} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} />
+                <YAxis dataKey="type" type="category" width={160} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: 'hsl(var(--card))',

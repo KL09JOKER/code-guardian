@@ -1,5 +1,6 @@
-import { Shield, History, Github, LayoutDashboard, Palette, Home, GitCompare, BookOpen } from 'lucide-react';
+import { Shield, History, Github, LayoutDashboard, Palette, Home, GitCompare, BookOpen, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme, THEMES } from '@/contexts/ThemeContext';
 import {
@@ -7,6 +8,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 
 interface HeaderProps {
@@ -18,7 +20,7 @@ interface HeaderProps {
 export function Header({ onHistoryClick, showHistory, isDashboard }: HeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, autoRiskTheme, setAutoRiskTheme } = useTheme();
 
   const navItems = [
     { path: '/scanner', label: 'Scanner', icon: Home },
@@ -76,7 +78,7 @@ export function Header({ onHistoryClick, showHistory, isDashboard }: HeaderProps
                 <Palette className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuContent align="end" className="w-56">
               {THEMES.map((t) => (
                 <DropdownMenuItem
                   key={t.value}
@@ -89,6 +91,20 @@ export function Header({ onHistoryClick, showHistory, isDashboard }: HeaderProps
                   </div>
                 </DropdownMenuItem>
               ))}
+              <DropdownMenuSeparator />
+              <div className="px-2 py-2 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-primary" />
+                  <div>
+                    <div className="text-sm font-medium">Auto Risk Theme</div>
+                    <div className="text-xs text-muted-foreground">Theme by risk level</div>
+                  </div>
+                </div>
+                <Switch
+                  checked={autoRiskTheme}
+                  onCheckedChange={setAutoRiskTheme}
+                />
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
 

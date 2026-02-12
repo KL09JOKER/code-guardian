@@ -14,21 +14,35 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const systemPrompt = `You are an expert security engineer. Given source code and a specific vulnerability, fix ONLY that vulnerability while preserving all other code exactly.
+    const systemPrompt = `You are an expert security engineer specializing in secure coding practices. Your task is to fix ALL security vulnerabilities in the provided code, not just the one highlighted.
 
-Return ONLY the complete fixed code — no explanations, no markdown fences, just the fixed source code.`;
+CRITICAL INSTRUCTIONS:
+1. Fix the SPECIFIC highlighted vulnerability first
+2. Then scan the ENTIRE code and fix ALL other security issues you can find
+3. The resulting code must be production-ready and have a security risk score of 0
+4. Replace all hardcoded secrets/credentials with environment variable references
+5. Sanitize all user inputs
+6. Use parameterized queries instead of string concatenation for SQL
+7. Replace eval(), exec(), and other dangerous functions with safe alternatives
+8. Add input validation and proper error handling
+9. Use cryptographically secure random functions instead of Math.random()
+10. Add proper authentication/authorization checks where missing
 
-    const userPrompt = `Fix this ${vulnerability.severity} "${vulnerability.type}" vulnerability at line ${vulnerability.line}${vulnerability.endLine ? `-${vulnerability.endLine}` : ''}.
+Return ONLY the complete fixed code — no explanations, no markdown fences, no comments about what was changed. Just the pure secure source code.`;
 
-Description: ${vulnerability.description}
+    const userPrompt = `Fix ALL security vulnerabilities in this ${language} code. The primary vulnerability is a ${vulnerability.severity} "${vulnerability.type}" at line ${vulnerability.line}${vulnerability.endLine ? `-${vulnerability.endLine}` : ''}.
+
+Primary issue: ${vulnerability.description}
 Recommendation: ${vulnerability.recommendation}
+
+But you MUST also fix every other security issue in the code. The final code should have zero vulnerabilities.
 
 Original code:
 \`\`\`${language}
 ${code}
 \`\`\`
 
-Return ONLY the complete fixed code.`;
+Return ONLY the complete, fully-secured fixed code.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

@@ -60,17 +60,15 @@ export function Header({ onHistoryClick, showHistory, isDashboard }: HeaderProps
             );
           })}
 
-          {!isDashboard && location.pathname === '/scanner' && (
-            <Button
-              variant={showHistory ? 'cyber' : 'ghost'}
-              size="sm"
-              onClick={onHistoryClick}
-              className="gap-1.5"
-            >
-              <History className="w-4 h-4" />
-              <span className="hidden sm:inline">History</span>
-            </Button>
-          )}
+          <Button
+            variant={showHistory ? 'cyber' : 'ghost'}
+            size="sm"
+            onClick={onHistoryClick}
+            className="gap-1.5"
+          >
+            <History className="w-4 h-4" />
+            <span className="hidden sm:inline">History</span>
+          </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

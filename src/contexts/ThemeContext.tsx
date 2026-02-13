@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-export type ThemeName = 'dark-tech' | 'cyber-green' | 'midnight-purple' | 'crimson-red' | 'ember-orange' | 'matrix-green';
+export type ThemeName = 'dark-tech' | 'cyber-green' | 'midnight-purple' | 'crimson-red' | 'ember-orange' | 'matrix-green' | 'stealth-black';
 
 interface ThemeContextType {
   theme: ThemeName;
@@ -45,7 +45,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     let riskTheme: ThemeName;
     if (riskScore >= 70) {
       riskTheme = 'crimson-red';
-    } else if (riskScore >= 35) {
+    } else if (riskScore >= 40) {
       riskTheme = 'ember-orange';
     } else {
       riskTheme = 'matrix-green';
@@ -55,7 +55,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const applyThemeClass = (t: ThemeName) => {
     const root = document.documentElement;
-    root.classList.remove('theme-dark-tech', 'theme-cyber-green', 'theme-midnight-purple', 'theme-crimson-red', 'theme-ember-orange', 'theme-matrix-green');
+    root.classList.remove('theme-dark-tech', 'theme-cyber-green', 'theme-midnight-purple', 'theme-crimson-red', 'theme-ember-orange', 'theme-matrix-green', 'theme-stealth-black');
     root.classList.add(`theme-${t}`);
   };
 
@@ -83,4 +83,5 @@ export const THEMES: { value: ThemeName; label: string; description: string }[] 
   { value: 'crimson-red', label: 'Crimson Red', description: 'Blood red & ember glow' },
   { value: 'ember-orange', label: 'Ember Orange', description: 'Warm amber & fire tones' },
   { value: 'matrix-green', label: 'Matrix Green', description: 'Neon green terminal style' },
+  { value: 'stealth-black', label: 'Stealth Black', description: 'Pure black OLED aesthetic' },
 ];

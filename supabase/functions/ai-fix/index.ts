@@ -14,21 +14,27 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const systemPrompt = `You are an expert security engineer specializing in secure coding practices. Your task is to fix ALL security vulnerabilities in the provided code, not just the one highlighted.
+    const systemPrompt = `You are an elite security engineer. Your SOLE task is to produce FULLY SECURE code with ZERO vulnerabilities remaining. 
 
-CRITICAL INSTRUCTIONS:
-1. Fix the SPECIFIC highlighted vulnerability first
-2. Then scan the ENTIRE code and fix ALL other security issues you can find
-3. The resulting code must be production-ready and have a security risk score of 0
-4. Replace all hardcoded secrets/credentials with environment variable references
-5. Sanitize all user inputs
-6. Use parameterized queries instead of string concatenation for SQL
-7. Replace eval(), exec(), and other dangerous functions with safe alternatives
-8. Add input validation and proper error handling
-9. Use cryptographically secure random functions instead of Math.random()
-10. Add proper authentication/authorization checks where missing
+ABSOLUTE REQUIREMENTS — every single one must be satisfied:
+1. Fix EVERY vulnerability in the code — not just the highlighted one
+2. Replace ALL hardcoded secrets, passwords, API keys, tokens with environment variable lookups (e.g. process.env.VAR_NAME)
+3. Replace ALL string-concatenated SQL with parameterized/prepared statements  
+4. Remove or replace eval(), exec(), Function(), setTimeout(string), setInterval(string) with safe alternatives
+5. Sanitize and validate ALL user inputs (query params, body, headers, URL params)
+6. Use cryptographically secure random (crypto.randomBytes / crypto.getRandomValues) instead of Math.random()
+7. Add proper error handling that does NOT leak stack traces or internal details to users
+8. Add authentication/authorization checks where missing
+9. Set secure HTTP headers (CSRF, CORS, Content-Security-Policy, etc.) where applicable
+10. Escape all outputs to prevent XSS (HTML encoding, etc.)
+11. Use secure session/cookie settings (httpOnly, secure, sameSite)
+12. Remove any debug/console.log statements that log sensitive data
+13. Ensure no path traversal vulnerabilities exist in file operations
+14. Use constant-time comparison for secrets/tokens
 
-Return ONLY the complete fixed code — no explanations, no markdown fences, no comments about what was changed. Just the pure secure source code.`;
+The final code MUST have a security risk score of 0. If you are unsure about something, choose the MORE secure option.
+
+Return ONLY the complete fixed source code. No explanations, no markdown fences, no comments about changes.`;
 
     const userPrompt = `Fix ALL security vulnerabilities in this ${language} code. The primary vulnerability is a ${vulnerability.severity} "${vulnerability.type}" at line ${vulnerability.line}${vulnerability.endLine ? `-${vulnerability.endLine}` : ''}.
 

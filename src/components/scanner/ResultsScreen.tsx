@@ -74,7 +74,7 @@ export function ResultsScreen({ result, onNewScan }: ResultsScreenProps) {
               </span>
               <span className="capitalize">• {result.language}</span>
               <span>• {result.vulnerabilities.length} vulnerabilities found</span>
-              <span>• Scanned in {result.scanDuration}ms</span>
+              <span>• Scanned in {(result.scanDuration / 1000).toFixed(1)}s</span>
             </div>
           </div>
         </div>
@@ -96,6 +96,23 @@ export function ResultsScreen({ result, onNewScan }: ResultsScreenProps) {
         </div>
       </div>
 
+      {/* AI Fix Suggestion - Full Width */}
+      {fixedCode && selectedVulnerability && (
+        <Card className="p-6 bg-card/50 border-border/50 space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Wand2 className="w-5 h-5 text-primary" />
+              AI Fix Suggestion
+            </h4>
+            <Button variant="ghost" size="sm" onClick={handleCopyFix}>
+              {copied ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
+              {copied ? 'Copied' : 'Copy Fix'}
+            </Button>
+          </div>
+          <CodeDiffView originalCode={result.code} fixedCode={fixedCode} vulnerability={selectedVulnerability} />
+        </Card>
+      )}
+
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Left Column: Vulnerabilities List */}
@@ -115,7 +132,7 @@ export function ResultsScreen({ result, onNewScan }: ResultsScreenProps) {
           </div>
         </div>
 
-        {/* Right Column: Code Viewer + AI Explanation + Fix */}
+        {/* Right Column: Code Viewer + AI Explanation */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-foreground">Code Analysis</h3>
           
@@ -126,22 +143,6 @@ export function ResultsScreen({ result, onNewScan }: ResultsScreenProps) {
           />
           
           <AIExplanation vulnerability={selectedVulnerability} />
-          
-          {fixedCode && selectedVulnerability && (
-            <Card className="p-4 bg-card/50 border-border/50 space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="font-semibold text-foreground flex items-center gap-2">
-                  <Wand2 className="w-4 h-4 text-primary" />
-                  AI Fix Suggestion
-                </h4>
-                <Button variant="ghost" size="sm" onClick={handleCopyFix}>
-                  {copied ? <Check className="w-3 h-3 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
-                  {copied ? 'Copied' : 'Copy Fix'}
-                </Button>
-              </div>
-              <CodeDiffView originalCode={result.code} fixedCode={fixedCode} vulnerability={selectedVulnerability} />
-            </Card>
-          )}
         </div>
       </div>
     </div>

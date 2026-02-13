@@ -119,7 +119,7 @@ export function AppLayout({ children, onHistorySelect }: AppLayoutProps) {
           <SheetHeader>
             <SheetTitle className="text-sidebar-foreground">Scan History</SheetTitle>
           </SheetHeader>
-          <div className="mt-6">
+          <div className="mt-6 overflow-y-auto max-h-[calc(100vh-8rem)]">
             <ScanHistory
               history={history}
               onSelect={handleHistorySelect}

@@ -34,7 +34,7 @@ ABSOLUTE REQUIREMENTS — every single one must be satisfied:
 
 The final code MUST have a security risk score of 0. If you are unsure about something, choose the MORE secure option.
 
-Return ONLY the complete fixed source code. No explanations, no markdown fences, no comments about changes.`;
+Return ONLY the complete fixed source code. No explanations, no markdown fences, no comments about changes, and absolutely NO code comments (no // or /* */ or # comments anywhere in the output). The code must be clean with zero comments.`;
 
     const userPrompt = `Fix ALL security vulnerabilities in this ${language} code. The primary vulnerability is a ${vulnerability.severity} "${vulnerability.type}" at line ${vulnerability.line}${vulnerability.endLine ? `-${vulnerability.endLine}` : ''}.
 

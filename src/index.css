@@ -479,41 +479,7 @@
   }
 }
 
-  .cyber-glow { box-shadow: var(--glow-primary); }
-  .cyber-glow-success { box-shadow: var(--glow-success); }
-  .cyber-glow-warning { box-shadow: var(--glow-warning); }
-  .cyber-glow-critical { box-shadow: var(--glow-critical); }
-
-  .cyber-border {
-    border: 1px solid hsl(var(--primary) / 0.3);
-    background: linear-gradient(180deg, hsl(var(--primary) / 0.05) 0%, transparent 100%);
-  }
-
-  .scan-line {
-    background: linear-gradient(180deg, transparent 0%, hsl(var(--primary) / 0.3) 50%, transparent 100%);
-    animation: scan 2s ease-in-out infinite;
-  }
-
-  .pulse-ring {
-    animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-  }
-
-  .matrix-bg {
-    background: 
-      radial-gradient(ellipse at center, hsl(var(--primary) / 0.1) 0%, transparent 70%),
-      var(--gradient-cyber);
-  }
-
-  .code-highlight-danger {
-    background: hsl(var(--critical) / 0.2);
-    border-left: 3px solid hsl(var(--critical));
-  }
-
-  .code-highlight-warning {
-    background: hsl(var(--warning) / 0.2);
-    border-left: 3px solid hsl(var(--warning));
-  }
-
+@layer base {
   /* Shadow Bleed Theme (Stealth Black + Blood Red text) */
   .theme-shadow-bleed {
     --background: 0 0% 2%;
@@ -571,6 +537,51 @@
     --gradient-card: linear-gradient(180deg, hsl(0 0% 7%) 0%, hsl(0 0% 5%) 100%);
   }
 }
+
+@layer components {
+  .cyber-grid {
+    background-image: 
+      linear-gradient(hsl(var(--border) / 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.3) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .cyber-glow { box-shadow: var(--glow-primary); }
+  .cyber-glow-success { box-shadow: var(--glow-success); }
+  .cyber-glow-warning { box-shadow: var(--glow-warning); }
+  .cyber-glow-critical { box-shadow: var(--glow-critical); }
+
+  .cyber-border {
+    border: 1px solid hsl(var(--primary) / 0.3);
+    background: linear-gradient(180deg, hsl(var(--primary) / 0.05) 0%, transparent 100%);
+  }
+
+  .scan-line {
+    background: linear-gradient(180deg, transparent 0%, hsl(var(--primary) / 0.3) 50%, transparent 100%);
+    animation: scan 2s ease-in-out infinite;
+  }
+
+  .pulse-ring {
+    animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  }
+
+  .matrix-bg {
+    background: 
+      radial-gradient(ellipse at center, hsl(var(--primary) / 0.1) 0%, transparent 70%),
+      var(--gradient-cyber);
+  }
+
+  .code-highlight-danger {
+    background: hsl(var(--critical) / 0.2);
+    border-left: 3px solid hsl(var(--critical));
+  }
+
+  .code-highlight-warning {
+    background: hsl(var(--warning) / 0.2);
+    border-left: 3px solid hsl(var(--warning));
+  }
+}
+
 @layer utilities {
   @keyframes scan {
     0%, 100% { transform: translateY(-100%); opacity: 0; }

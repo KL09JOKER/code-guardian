@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-export type ThemeName = 'dark-tech' | 'cyber-green' | 'midnight-purple' | 'crimson-red' | 'ember-orange' | 'matrix-green' | 'stealth-black' | 'blood-shadow' | 'void-red';
+export type ThemeName = 'dark-tech' | 'cyber-green' | 'midnight-purple' | 'crimson-red' | 'ember-orange' | 'matrix-green' | 'stealth-black' | 'blood-shadow' | 'void-red' | 'shadow-bleed';
 
 interface ThemeContextType {
   theme: ThemeName;
@@ -55,7 +55,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const applyThemeClass = (t: ThemeName) => {
     const root = document.documentElement;
-    root.classList.remove('theme-dark-tech', 'theme-cyber-green', 'theme-midnight-purple', 'theme-crimson-red', 'theme-ember-orange', 'theme-matrix-green', 'theme-stealth-black', 'theme-blood-shadow', 'theme-void-red');
+    root.classList.remove('theme-dark-tech', 'theme-cyber-green', 'theme-midnight-purple', 'theme-crimson-red', 'theme-ember-orange', 'theme-matrix-green', 'theme-stealth-black', 'theme-blood-shadow', 'theme-void-red', 'theme-shadow-bleed');
     root.classList.add(`theme-${t}`);
   };
 
@@ -86,4 +86,5 @@ export const THEMES: { value: ThemeName; label: string; description: string }[] 
   { value: 'stealth-black', label: 'Stealth Black', description: 'Pure black OLED aesthetic' },
   { value: 'blood-shadow', label: 'Blood & Shadow', description: 'Black & red sinister aesthetic' },
   { value: 'void-red', label: 'Void Red', description: 'OLED black with crimson red accents' },
+  { value: 'shadow-bleed', label: 'Shadow Bleed', description: 'OLED black with blood red secondary text' },
 ];

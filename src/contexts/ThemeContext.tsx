@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-export type ThemeName = 'dark-tech' | 'cyber-green' | 'midnight-purple' | 'crimson-red' | 'ember-orange' | 'matrix-green' | 'stealth-black' | 'blood-shadow' | 'void-red' | 'shadow-bleed';
+export type ThemeName = 'dark-tech' | 'cyber-green' | 'midnight-purple' | 'crimson-red' | 'ember-orange' | 'matrix-green' | 'stealth-black' | 'blood-shadow' | 'shadow-bleed';
 
 interface ThemeContextType {
   theme: ThemeName;

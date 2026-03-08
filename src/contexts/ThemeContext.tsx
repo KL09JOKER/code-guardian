@@ -55,7 +55,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const applyThemeClass = (t: ThemeName) => {
     const root = document.documentElement;
-    root.classList.remove('theme-dark-tech', 'theme-cyber-green', 'theme-midnight-purple', 'theme-crimson-red', 'theme-ember-orange', 'theme-matrix-green', 'theme-stealth-black', 'theme-blood-shadow', 'theme-void-red', 'theme-shadow-bleed');
+    root.classList.remove('theme-dark-tech', 'theme-cyber-green', 'theme-midnight-purple', 'theme-crimson-red', 'theme-ember-orange', 'theme-matrix-green', 'theme-stealth-black', 'theme-blood-shadow', 'theme-shadow-bleed');
     root.classList.add(`theme-${t}`);
   };
 

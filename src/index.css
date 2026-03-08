@@ -479,6 +479,109 @@
   }
 }
 
+@layer base {
+  /* Shadow Bleed Theme (Stealth Black + Blood Red text) */
+  .theme-shadow-bleed {
+    --background: 0 0% 2%;
+    --foreground: 0 0% 90%;
+
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 90%;
+
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 90%;
+
+    --primary: 0 80% 50%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 90%;
+
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 350 70% 48%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 90%;
+
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 2%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 2%;
+
+    --critical: 0 72% 51%;
+    --critical-foreground: 0 0% 90%;
+
+    --border: 0 0% 12%;
+    --input: 0 0% 10%;
+    --ring: 0 80% 50%;
+
+    --sidebar-background: 0 0% 3%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 0 80% 50%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 0 0% 12%;
+    --sidebar-ring: 0 80% 50%;
+
+    --glow-primary: 0 0 20px hsl(0 80% 50% / 0.4), 0 0 40px hsl(0 80% 50% / 0.2);
+    --glow-success: 0 0 20px hsl(160 84% 39% / 0.5), 0 0 40px hsl(160 84% 39% / 0.3);
+    --glow-warning: 0 0 20px hsl(38 92% 50% / 0.5), 0 0 40px hsl(38 92% 50% / 0.3);
+    --glow-critical: 0 0 20px hsl(0 72% 51% / 0.5), 0 0 40px hsl(0 72% 51% / 0.3);
+
+    --gradient-cyber: linear-gradient(135deg, hsl(0 80% 50% / 0.06) 0%, hsl(0 0% 2%) 50%, hsl(350 70% 48% / 0.04) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 7%) 0%, hsl(0 0% 5%) 100%);
+  }
+}
+
+@layer components {
+  .cyber-grid {
+    background-image: 
+      linear-gradient(hsl(var(--border) / 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.3) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .cyber-glow { box-shadow: var(--glow-primary); }
+  .cyber-glow-success { box-shadow: var(--glow-success); }
+  .cyber-glow-warning { box-shadow: var(--glow-warning); }
+  .cyber-glow-critical { box-shadow: var(--glow-critical); }
+
+  .cyber-border {
+    border: 1px solid hsl(var(--primary) / 0.3);
+    background: linear-gradient(180deg, hsl(var(--primary) / 0.05) 0%, transparent 100%);
+  }
+
+  .scan-line {
+    background: linear-gradient(180deg, transparent 0%, hsl(var(--primary) / 0.3) 50%, transparent 100%);
+    animation: scan 2s ease-in-out infinite;
+  }
+
+  .pulse-ring {
+    animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  }
+
+  .matrix-bg {
+    background: 
+      radial-gradient(ellipse at center, hsl(var(--primary) / 0.1) 0%, transparent 70%),
+      var(--gradient-cyber);
+  }
+
+  .code-highlight-danger {
+    background: hsl(var(--critical) / 0.2);
+    border-left: 3px solid hsl(var(--critical));
+  }
+
+  .code-highlight-warning {
+    background: hsl(var(--warning) / 0.2);
+    border-left: 3px solid hsl(var(--warning));
+  }
+}
+
   .cyber-glow { box-shadow: var(--glow-primary); }
   .cyber-glow-success { box-shadow: var(--glow-success); }
   .cyber-glow-warning { box-shadow: var(--glow-warning); }

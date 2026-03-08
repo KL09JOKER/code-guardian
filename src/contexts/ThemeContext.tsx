@@ -85,4 +85,5 @@ export const THEMES: { value: ThemeName; label: string; description: string }[] 
   { value: 'matrix-green', label: 'Matrix Green', description: 'Neon green terminal style' },
   { value: 'stealth-black', label: 'Stealth Black', description: 'Pure black OLED aesthetic' },
   { value: 'blood-shadow', label: 'Blood & Shadow', description: 'Black & red sinister aesthetic' },
+  { value: 'void-red', label: 'Void Red', description: 'OLED black with crimson red accents' },
 ];

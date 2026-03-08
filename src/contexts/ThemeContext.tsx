@@ -44,7 +44,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (!autoRiskTheme) return;
     let riskTheme: ThemeName;
     if (riskScore >= 70) {
-      riskTheme = 'crimson-red';
+      riskTheme = 'blood-shadow';
     } else if (riskScore >= 40) {
       riskTheme = 'ember-orange';
     } else {

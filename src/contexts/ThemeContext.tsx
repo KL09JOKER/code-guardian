@@ -86,4 +86,5 @@ export const THEMES: { value: ThemeName; label: string; description: string }[] 
   { value: 'stealth-black', label: 'Stealth Black', description: 'Pure black OLED aesthetic' },
   { value: 'blood-shadow', label: 'Blood & Shadow', description: 'Black & red sinister aesthetic' },
   { value: 'void-red', label: 'Void Red', description: 'OLED black with crimson red accents' },
+  { value: 'shadow-bleed', label: 'Shadow Bleed', description: 'OLED black with blood red secondary text' },
 ];
